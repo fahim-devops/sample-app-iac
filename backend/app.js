@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db');
+const { pool, testConnection } = require('./db');
 const apiRoutes = require('./routes/api');
 
 const app = express();
@@ -11,13 +11,12 @@ app.use(cors());
 app.use(express.json());
 
 // Database connection
-db.connect(err => {
-    if (err) {
-        console.error('Database connection failed: ' + err.stack);
-        return;
+(async () => {
+    const isConnected = await testConnection();
+    if (!isConnected) {
+        process.exit(1);
     }
-    console.log('Connected to database with threadId: ' + db.threadId);
-});
+})();
 
 // Routes
 app.use('/api', apiRoutes);

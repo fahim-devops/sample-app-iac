@@ -10,4 +10,20 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-module.exports = pool;
+// Test connection
+async function testConnection() {
+    try {
+        const connection = await pool.getConnection();
+        console.log('Connected to database with threadId:', connection.threadId);
+        connection.release();
+        return true;
+    } catch (err) {
+        console.error('Database connection failed:', err);
+        return false;
+    }
+}
+
+module.exports = {
+    pool,
+    testConnection
+};
